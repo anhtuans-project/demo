@@ -16,7 +16,13 @@ public class Producer {
         } catch (Exception e) {
             System.out.println("Unable to send message=[" +
                     message + "] due to : " + e.getMessage());
+            handleFailure(message, e);
         }
+    }
+
+    private void handleFailure(String message, Exception e) {
+        //Thông báo
+        //Xử lý lưu DB
     }
 }
 

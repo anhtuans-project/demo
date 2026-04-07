@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 public class Consumer {
     @KafkaListener(
             topics = "foo", groupId = "my-group")
-    public String listenToPartition(
+    public void listenToPartition(
             @Payload String message,
             @Header(KafkaHeaders.RECEIVED_PARTITION) int partition,
             @Header(KafkaHeaders.OFFSET) long offset,
@@ -20,11 +20,27 @@ public class Consumer {
                 "Received Message: " + message
                         + "from partition: " + partition + " | Offset: " + offset);
         try {
+            //Check xem đã nhận message này chưa (truy vấn DB, ...)
+            if (isAlreadyProcessed(message)) {
+                ack.acknowledge(); // Commit offset để bỏ qua
+                return;
+            }
+            //Xử lý bussiness logic
+            processBusinessLogic(message);
+
             ack.acknowledge();
-            Thread.sleep(10000);
         } catch (Exception e) {
             System.out.println("Error while listening to partition: " + partition);
+            throw e;
         }
-        return "Received Message: " + message + "from partition: " + partition;
+    }
+
+    private boolean isAlreadyProcessed(String message) {
+        //Implement logic kiểm tra trong DB/Redis xem message_id này đã tồn tại chưa
+        return false;
+    }
+
+    private void processBusinessLogic(String message) {
+        //Logic nghiệp vụ thực tế
     }
 }
