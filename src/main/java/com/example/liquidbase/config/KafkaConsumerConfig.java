@@ -50,7 +50,6 @@ public class KafkaConsumerConfig {
                 new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(consumerFactory());
 
-        // BẮT BUỘC: Ghi đè đúng config bạn muốn
         factory.getContainerProperties().setAckMode(ContainerProperties.AckMode.MANUAL_IMMEDIATE);
         factory.getContainerProperties().setSyncCommits(true); // Chờ Kafka phản hồi commit mới tắt
 

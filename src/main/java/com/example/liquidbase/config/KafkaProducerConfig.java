@@ -30,6 +30,18 @@ public class KafkaProducerConfig {
         configProps.put(
                 ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG,
                 StringSerializer.class);
+        configProps.put(
+                ProducerConfig.ACKS_CONFIG,
+                1
+        );
+        configProps.put(
+                ProducerConfig.RETRIES_CONFIG,
+                5
+        );
+        configProps.put(
+                ProducerConfig.RETRY_BACKOFF_MS_CONFIG,
+                1000
+        );
         return new DefaultKafkaProducerFactory<>(configProps);
     }
 
