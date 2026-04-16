@@ -7,7 +7,7 @@ import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Service;
 
-@Service
+//@Service
 public class Consumer {
     @KafkaListener(
             topics = "foo", groupId = "my-group")
