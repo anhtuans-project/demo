@@ -22,6 +22,10 @@ spring.jpa.hibernate.ddl-auto=update
 spring.jpa.show-sql=true
 spring.jpa.properties.hibernate.format_sql=true
 
+spring.security.oauth2.client.registration.google.client-id=
+spring.security.oauth2.client.registration.google.client-secret=
+spring.security.oauth2.client.registration.google.scope=
+
 oauth2.auth-server-url=http://localhost:8082
 oauth2.client-id=project_1_client
 oauth2.client-secret=secret123

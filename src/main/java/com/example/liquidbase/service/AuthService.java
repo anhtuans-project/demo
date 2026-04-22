@@ -66,9 +66,6 @@ public class AuthService {
         return tokens;
     }
 
-    /**
-     * Lấy thông tin User
-     */
     public JsonNode getUserInfo(String accessToken) throws Exception {
         String url = authServerUrl + "/oauth/userinfo";
 
