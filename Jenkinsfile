@@ -19,7 +19,7 @@ pipeline {
             parallel {
                 stage('Java') {
                     steps {
-                            sh 'mvn clean install'
+                            powershell 'mvn clean install'
                     }
                 }
             }
@@ -28,7 +28,7 @@ pipeline {
         stage('Test') {
             steps {
                 script {
-                    sh 'mvn test'
+                    powershell 'mvn test'
                 }
             }
         }
@@ -37,8 +37,8 @@ pipeline {
                     steps {
                         script {
                             // Download and run the Codacy Coverage Reporter
-                            sh '''
-                            curl -Ls https://coverage.codacy.com/get.sh | bash -s report -r coverage/cobertura-coverage.xml
+                            powershell '''
+                            curl -Ls https://coverage.codacy.com/get.powershell | bash -s report -r coverage/cobertura-coverage.xml
                             '''
                         }
                     }
