@@ -8,6 +8,7 @@ import org.springframework.kafka.annotation.EnableKafka;
 @SpringBootApplication
 public class LiquidBaseApplication {
     public static void main(String[] args) {
+
         SpringApplication.run(LiquidBaseApplication.class, args);
     }
 }
