@@ -40,11 +40,13 @@ pipeline {
                                            if (fileExists('target/site/jacoco/jacoco.xml')) {
                                                withCredentials([string(credentialsId: 'CODACY_PROJECT_TOKEN', variable: 'CODACY_PROJECT_TOKEN')]) {
                                                    powershell """
-                                                       Invoke-WebRequest -Uri 'https://coverage.codacy.com/get.ps1' -OutFile 'codacy-reporter.ps1'
+                                                                           # Tải phiên bản mới nhất của reporter từ GitHub Releases
+                                                                           \$url = "https://github.com/codacy/codacy-coverage-reporter/releases/download/12.0.0/codacy-coverage-reporter-12.0.0-assembly.jar"
+                                                                           Invoke-WebRequest -Uri \$url -OutFile "codacy-reporter.jar"
 
-                                                       # Chú ý: Codacy hỗ trợ cả jacoco.xml
-                                                       ./codacy-reporter.ps1 -ProjectToken '${env.CODACY_PROJECT_TOKEN}' -CoverageReports 'target/site/jacoco/jacoco.xml'
-                                                   """
+                                                                           # Chạy file jar với Java (cần cài Java trong PATH)
+                                                                           java -jar codacy-reporter.jar report -l Java -r target/site/jacoco/jacoco.xml --api-token ${env.CODACY_PROJECT_TOKEN}
+                                                                       """
                                                }
                                            } else {
                                                echo "No coverage file found. Skipping Codacy upload."
