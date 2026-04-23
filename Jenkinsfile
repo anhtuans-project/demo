@@ -36,15 +36,15 @@ pipeline {
         stage('Upload Coverage to Codacy') {
                     steps {
                         script {
-                           // Chỉ chạy nếu file coverage tồn tại
-                                           if (fileExists('target/site/cobertura/coverage.xml')) {
-                                               powershell '''
+                           if (fileExists('target/site/cobertura/coverage.xml')) {
+                                           // Dùng withCredentials để bảo mật token
+                                           withCredentials([string(credentialsId: 'CODACY_TOKEN', variable: 'CODACY_PROJECT_TOKEN')]) {
+                                               powershell """
                                                    Invoke-WebRequest -Uri 'https://coverage.codacy.com/get.ps1' -OutFile 'codacy-reporter.ps1'
 
-                                                   # ./codacy-reporter.ps1 -ProjectToken 'YOUR_CODACY_TOKEN' -CoverageReports 'target/site/cobertura/coverage.xml'
-
-                                                   echo "Codacy script downloaded. Skipping upload due to missing token configuration."
-                                               '''
+                                                   # Chạy script với token và file coverage
+                                                   ./codacy-reporter.ps1 -ProjectToken '${env.CODACY_PROJECT_TOKEN}' -CoverageReports 'target/site/cobertura/coverage.xml'
+                                               """
                                            } else {
                                                echo "No coverage file found. Skipping Codacy upload."
                                            }
