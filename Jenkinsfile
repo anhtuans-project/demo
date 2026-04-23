@@ -45,6 +45,7 @@ pipeline {
                                                    # Chạy script với token và file coverage
                                                    ./codacy-reporter.ps1 -ProjectToken '${env.CODACY_PROJECT_TOKEN}' -CoverageReports 'target/site/cobertura/coverage.xml'
                                                """
+                                               }
                                            } else {
                                                echo "No coverage file found. Skipping Codacy upload."
                                            }
