@@ -38,12 +38,12 @@ pipeline {
                         script {
                                            // Sửa đường dẫn thành jacoco.xml
                                            if (fileExists('target/site/jacoco/jacoco.xml')) {
-                                               withCredentials([string(credentialsId: 'CODACY_API_TOKEN', variable: 'CODACY_API_TOKEN')]) {
+                                               withCredentials([string(credentialsId: 'CODACY_PROJECT_TOKEN', variable: 'CODACY_PROJECT_TOKEN')]) {
                                                    powershell """
                                                        Invoke-WebRequest -Uri 'https://coverage.codacy.com/get.ps1' -OutFile 'codacy-reporter.ps1'
 
                                                        # Chú ý: Codacy hỗ trợ cả jacoco.xml
-                                                       ./codacy-reporter.ps1 -ProjectToken '${env.CODACY_API_TOKEN}' -CoverageReports 'target/site/jacoco/jacoco.xml'
+                                                       ./codacy-reporter.ps1 -ProjectToken '${env.CODACY_PROJECT_TOKEN}' -CoverageReports 'target/site/jacoco/jacoco.xml'
                                                    """
                                                }
                                            } else {
