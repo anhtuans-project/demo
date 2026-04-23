@@ -38,7 +38,7 @@ pipeline {
                         script {
                                            // Sửa đường dẫn thành jacoco.xml
                                            if (fileExists('target/site/jacoco/jacoco.xml')) {
-                                               withCredentials([string(credentialsId: 'CODACY_TOKEN', variable: 'CODACY_API_TOKEN')]) {
+                                               withCredentials([string(credentialsId: 'CODACY_API_TOKEN', variable: 'CODACY_API_TOKEN')]) {
                                                    powershell """
                                                        Invoke-WebRequest -Uri 'https://coverage.codacy.com/get.ps1' -OutFile 'codacy-reporter.ps1'
 
