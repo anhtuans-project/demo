@@ -36,15 +36,15 @@ pipeline {
         stage('Upload Coverage to Codacy') {
                     steps {
                         script {
-                           if (fileExists('target/site/cobertura/coverage.xml')) {
-                                           // Dùng withCredentials để bảo mật token
-                                           withCredentials([string(credentialsId: 'CODACY_TOKEN', variable: 'CODACY_PROJECT_TOKEN')]) {
-                                               powershell """
-                                                   Invoke-WebRequest -Uri 'https://coverage.codacy.com/get.ps1' -OutFile 'codacy-reporter.ps1'
+                                           // Sửa đường dẫn thành jacoco.xml
+                                           if (fileExists('target/site/jacoco/jacoco.xml')) {
+                                               withCredentials([string(credentialsId: 'CODACY_TOKEN', variable: 'CODACY_API_TOKEN')]) {
+                                                   powershell """
+                                                       Invoke-WebRequest -Uri 'https://coverage.codacy.com/get.ps1' -OutFile 'codacy-reporter.ps1'
 
-                                                   # Chạy script với token và file coverage
-                                                   ./codacy-reporter.ps1 -ProjectToken '${env.CODACY_PROJECT_TOKEN}' -CoverageReports 'target/site/cobertura/coverage.xml'
-                                               """
+                                                       # Chú ý: Codacy hỗ trợ cả jacoco.xml
+                                                       ./codacy-reporter.ps1 -ProjectToken '${env.CODACY_API_TOKEN}' -CoverageReports 'target/site/jacoco/jacoco.xml'
+                                                   """
                                                }
                                            } else {
                                                echo "No coverage file found. Skipping Codacy upload."
