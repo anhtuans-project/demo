@@ -38,7 +38,7 @@ pipeline {
                         echo "Found JaCoCo report. Attempting to upload to Codacy..."
 
                         try {
-                            withCredentials([string(credentialsId: 'CODACY_TOKEN', variable: 'CODACY_API_TOKEN')]) {
+                            withCredentials([string(credentialsId: 'CODACY_PROJECT_TOKEN', variable: 'CODACY_PROJECT_TOKEN')]) {
                                 powershell '''
                                     # 1. Ép buộc dùng TLS 1.2
                                     [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
@@ -57,7 +57,7 @@ pipeline {
                                     Invoke-WebRequest -Uri $url -OutFile $outputFile -Headers $header -UseBasicParsing -TimeoutSec 30
 
                                     Write-Host "Download successful. Running reporter..."
-                                    java -jar $outputFile report -l Java -r target/site/jacoco/jacoco.xml --api-token $env:CODACY_API_TOKEN
+                                    java -jar $outputFile report -l Java -r target/site/jacoco/jacoco.xml --api-token $env:CODACY_PROJECT_TOKEN
 
                                     Write-Host "✅ Codacy upload completed successfully."
                                 '''
