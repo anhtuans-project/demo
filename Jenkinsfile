@@ -40,36 +40,34 @@ pipeline {
                         try {
                             withCredentials([string(credentialsId: 'CODACY_PROJECT_TOKEN', variable: 'CODACY_PROJECT_TOKEN')]) {
                                 powershell '''
-                                    # 1. Ép buộc dùng TLS 1.2
                                     [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 
-                                    # 2. Cấu hình URL
                                     $url = "https://github.com/codacy/codacy-coverage-reporter/releases/download/12.0.0/codacy-coverage-reporter-12.0.0-assembly.jar"
                                     $outputFile = "codacy-reporter.jar"
 
-                                    # 3. Tạo Header User-Agent để GitHub không chặn request từ PowerShell mặc định
-                                    $header = @{
-                                        "User-Agent" = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
-                                    }
+                                    # Thêm User-Agent để tránh bị GitHub chặn bot
+                                    $header = @{"User-Agent"="Mozilla/5.0"}
 
-                                    Write-Host "Downloading reporter from GitHub..."
-                                    # Sử dụng -Headers và tăng Timeout
-                                    Invoke-WebRequest -Uri $url -OutFile $outputFile -Headers $header -UseBasicParsing -TimeoutSec 30
+                                    Write-Host "Downloading reporter..."
+                                    Invoke-WebRequest -Uri $url -OutFile $outputFile -Headers $header -UseBasicParsing -TimeoutSec 10
 
-                                    Write-Host "Download successful. Running reporter..."
+                                    Write-Host "Running reporter..."
                                     java -jar $outputFile report -l Java -r target/site/jacoco/jacoco.xml --api-token $env:CODACY_PROJECT_TOKEN
 
-                                    Write-Host "✅ Codacy upload completed successfully."
+                                    Write-Host "✅ Upload success."
                                 '''
                             }
                         } catch (Exception e) {
-                            echo "⚠️ WARNING: Failed to upload coverage to Codacy."
-                            echo "Error: ${e.message}"
-                            echo "This might be due to network restrictions or firewall."
-                            echo "Pipeline will continue without coverage report."
+                            // QUAN TRỌNG: Bắt lỗi và chỉ in cảnh báo, không throw exception ra ngoài
+                            echo "⚠️ WARNING: Could not connect to GitHub/Codacy."
+                            echo "Reason: ${e.message}"
+                            echo "Skipping coverage upload. Build will continue."
+
+                            // Tùy chọn: Đánh dấu build là UNSTABLE (màu vàng) thay vì FAILURE (đỏ)
+                            currentBuild.result = 'UNSTABLE'
                         }
                     } else {
-                        echo "No JaCoCo coverage report found. Skipping."
+                        echo "No JaCoCo report found. Skipping."
                     }
                 }
             }
